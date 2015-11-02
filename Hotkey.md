@@ -1,0 +1,78 @@
+# 简介 #
+
+从2011-12-30版本开始，GRUB4DOS支持热键功能。可以在菜单界面直接按某个指定的热键启动某项菜单。
+
+# 用法介绍 #
+
+  1. 直接下载最新版本hotkey命令放到grldr同磁盘的\boot\grub目录下。
+> > 如果您对GRUB4DOS外部命令运行机制比较熟悉，你可以放到自己喜欢的目录下。
+  1. 在你的菜单头部添加一句hotkey命令。
+  1. 在菜单的title后面添加hotkey支持的标识符号。
+> > 目前支持以下两种方式:
+    * 如果不需要在菜单上显示热键名称
+> > > title `^`_**HOTKEY** 菜单标题_
+    * 如果需要在菜单上显示热键名称（2012-01-03版开始支持）
+> > > title [**_HOTKEY_**] _菜单标题_
+  1. 2013-10-14 新增支持热键命令,即可以为某些命令指定一个热键,按下热键时就执行
+    * 语法
+> > > hotkey [**_HOTKEY_**] "COMMAND"
+> > > 例子:使用了以下命令之后,如果按了F9就会执行reboot
+> > > > hotkey [**_F9_**] reboot
+
+> > > 支持同时执行多个命令使用""
+> > > > hotkey [**_A_**] "echo Is test ;; pause test"
+
+> > > 可以在命令前置`@`使用隐藏的方式执键不会有任何的屏幕显示.
+> > > > hotkey [**_F2_**] "@kernel /xxxx ;; initred /xxxx ;; boot"
+    * 使用不带命令的hotkey删除或禁用该热键
+
+> > > 比如: 禁用已注册的F9热键
+> > > > hotkey [**_F9_**]
+注：两种热键方式可以根据需要选择使用。
+
+# 可选参数 #
+  * -nb 按键热后只选择对应菜单项，不启动。
+
+> > hotkey -nb
+  * -nc 除了方向键和回车键之外，如果按下的不是热键则丢弃。
+> > hotkey -nc
+> > 用于安全性比较高的场合，比如可以禁用'c','e'等GRUB4DOS默认的菜单热键。防止用户进入GRUB4DOS命令行或修改菜单。
+
+注：新的版本可以同时使用以上两个参数。
+
+# 用法举例 #
+一个菜单的例子.
+```
+default 1
+timeout 5
+##启用热键（如果您有多个菜单，只需要在主菜单启用即可，会自动生效）
+hotkey
+##按F9重启
+hotkey [F9] @reboot
+
+##按F8关机
+hotkey [F8] halt
+
+##按F1启动WINPE
+hotkey [F1] "map --mem /boot/winpe.iso (0xff) && map --hook && chainloader (0xff)"
+
+##使用按键'A'作为热键。
+title [A] Microsoft Windows Xp
+pause Boot To Winxp
+
+##按'B'键启动
+title [B] Microsoft Windows PE
+pause Boot TO WINPE
+
+##按'F2'键启动，但不显示前面的F2
+title ^F2 Test for hotkey F2
+pause You have press Hotkey F2
+
+##隐藏的菜单项目。
+title ^F5
+pause Hidden 
+```
+
+启动效果预览
+
+![http://photo.staticsdo.com/a1/230/284/421/89403-49499083-8.png](http://photo.staticsdo.com/a1/230/284/421/89403-49499083-8.png)
